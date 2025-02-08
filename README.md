@@ -1,3 +1,5 @@
+### A Fun exploration with fluid physics and ASCII rendering.
+
 ### Physics simulation license
 
 ```
