@@ -1,12 +1,4 @@
-/*
-I tweaked the original code quite a bit.
-
-You can find the original here: https://github.com/matthias-research/pages/blob/master/tenMinutePhysics/18-flip.html
-And a copy of its license below.
-
----
-
-Copyright 2022 Matthias Müller - Ten Minute Physics, 
+/* Copyright 2022 Matthias Müller - Ten Minute Physics, 
 www.youtube.com/c/TenMinutePhysics
 www.matthiasMueller.info/tenMinutePhysics
 
@@ -141,8 +133,6 @@ function clamp(x, min, max) {
   else return x;
 }
 
-// ----------------- start of simulator ------------------------------
-
 class FlipFluid {
   constructor(
     density,
@@ -218,8 +208,6 @@ class FlipFluid {
   pushParticlesApart(numIters) {
     var colorDiffusionCoeff = 0.001;
 
-    // count particles per cell
-
     this.numCellParticles.fill(0);
 
     for (var i = 0; i < this.numParticles; i++) {
@@ -240,17 +228,13 @@ class FlipFluid {
       this.numCellParticles[cellNr]++;
     }
 
-    // partial sums
-
     var first = 0;
 
     for (var i = 0; i < this.pNumCells; i++) {
       first += this.numCellParticles[i];
       this.firstCellParticle[i] = first;
     }
-    this.firstCellParticle[this.pNumCells] = first; // guard
-
-    // fill particles into cells
+    this.firstCellParticle[this.pNumCells] = first;
 
     for (var i = 0; i < this.numParticles; i++) {
       var x = this.particlePos[2 * i];
@@ -270,8 +254,6 @@ class FlipFluid {
       this.firstCellParticle[cellNr]--;
       this.cellParticleIds[this.firstCellParticle[cellNr]] = i;
     }
-
-    // push particles apart
 
     var minDist = 2.0 * this.particleRadius;
     var minDist2 = minDist * minDist;
@@ -343,7 +325,6 @@ class FlipFluid {
       var x = this.particlePos[2 * i];
       var y = this.particlePos[2 * i + 1];
 
-      // Define triangle vertices based on obstacleX, obstacleY and obstacleRadius
       const trianglePoints = [
         {
           x: obstacleX,
@@ -359,7 +340,6 @@ class FlipFluid {
         }, // bottom right
       ];
 
-      // Function to check if point is inside triangle
       function pointInTriangle(px, py, v1, v2, v3) {
         let d1 = sign(px, py, v1.x, v1.y, v2.x, v2.y);
         let d2 = sign(px, py, v2.x, v2.y, v3.x, v3.y);
@@ -373,7 +353,6 @@ class FlipFluid {
         return (px - x2) * (y1 - y2) - (x1 - x2) * (py - y2);
       }
 
-      // Check collision with triangle
       if (
         pointInTriangle(
           x,
@@ -383,14 +362,13 @@ class FlipFluid {
           trianglePoints[2]
         )
       ) {
-        // Find closest point on triangle and push particle out
+    
         let closestPoint = {
           x: x,
           y: y,
         };
         let minDist = Number.MAX_VALUE;
 
-        // Check against each edge
         for (let i = 0; i < 3; i++) {
           let p1 = trianglePoints[i];
           let p2 = trianglePoints[(i + 1) % 3];
@@ -424,7 +402,6 @@ class FlipFluid {
           }
         }
 
-        // Push particle out
         let dx = x - closestPoint.x;
         let dy = y - closestPoint.y;
         let d = Math.sqrt(dx * dx + dy * dy);
@@ -436,8 +413,6 @@ class FlipFluid {
         this.particleVel[2 * i] = 0;
         this.particleVel[2 * i + 1] = 0;
       }
-
-      // wall collisions
 
       if (x < minX) {
         x = minX;
@@ -637,8 +612,6 @@ class FlipFluid {
         for (var i = 0; i < f.length; i++) {
           if (d[i] > 0.0) f[i] /= d[i];
         }
-
-        // restore solid cells
 
         for (var i = 0; i < this.fNumX; i++) {
           for (var j = 0; j < this.fNumY; j++) {
@@ -856,12 +829,9 @@ class FlipFluid {
       this.transferVelocities(false, flipRatio);
     }
 
-    // We are not rendering particles at the moment
-    // this.updateParticleColors();
     this.updateCellColors();
   }
 }
-// ----------------- end of simulator ------------------------------
 
 var scene = {
   gravity: GRAVITY,
@@ -895,11 +865,7 @@ function setupScene() {
   var relWaterHeight = 0.618;
   var relWaterWidth = 1;
 
-  // dam break
-
-  // compute number of particles
-
-  var r = 0.3 * h; // particle radius w.r.t. cell size
+  var r = 0.3 * h;
   var dx = 2.0 * r;
   var dy = (Math.sqrt(3.0) / 2.0) * dx;
 
@@ -911,7 +877,6 @@ function setupScene() {
   );
   var maxParticles = numX * numY;
 
-  // create fluid
 
   f = scene.fluid = new FlipFluid(
     density,
@@ -922,15 +887,12 @@ function setupScene() {
     maxParticles
   );
 
-  // create particles
 
   f.numParticles = numX * numY;
   var p = 0;
   for (var i = 0; i < numX; i++) {
     for (var j = 0; j < numY; j++) {
-      // Center horizontally by adding offset to x position
       let xOffset = (tankWidth - numX * dx) / 2;
-      // Center vertically by adding offset to y position
       let yOffset = (tankHeight - numY * dy) * -0.5;
 
       f.particlePos[p++] =
@@ -939,14 +901,13 @@ function setupScene() {
     }
   }
 
-  // setup grid cells for tank
 
   var n = f.fNumY;
 
   for (var i = 0; i < f.fNumX; i++) {
     for (var j = 0; j < f.fNumY; j++) {
-      var s = 1.0; // fluid
-      if (i == 0 || i == f.fNumX - 1 || j == 0) s = 0.0; // solid
+      var s = 1.0;
+      if (i == 0 || i == f.fNumX - 1 || j == 0) s = 0.0;
       f.s[i * n + j] = s;
     }
   }
@@ -990,7 +951,6 @@ function setObstacle(x, y, reset) {
   scene.obstacleVelY = vy;
 }
 
-// interaction -------------------------------------------------------
 
 var mouseDown = false;
 
@@ -1077,7 +1037,6 @@ document.addEventListener("keydown", (event) => {
   }
 });
 
-// on window resize, refresh
 let resizeTimeout;
 window.addEventListener("resize", () => {
   clearTimeout(resizeTimeout);
@@ -1086,7 +1045,6 @@ window.addEventListener("resize", () => {
   }, 250);
 });
 
-// Request device motion permission if available
 async function requestDeviceMotion() {
   if (typeof DeviceMotionEvent?.requestPermission === "function") {
     try {
@@ -1117,9 +1075,7 @@ function setupDeviceMotion() {
       return;
     }
 
-    // Adjust for screen orientation
     if (window.orientation === 90 || window.orientation === -90) {
-      // In landscape mode, swap and invert x and y
       const temp = x;
       x = -y;
       y = temp;
@@ -1140,9 +1096,7 @@ function toggleStart() {
   else button.innerHTML = "Start";
   scene.paused = !scene.paused;
 }
-
-// main -------------------------------------------------------
-
+    
 function simulate() {
   if (!scene.paused)
     scene.fluid.simulate(
@@ -1200,11 +1154,9 @@ function update() {
   }
 
   if (renderCanvas) {
-    // Use a single ImageData for better performance
     const imageData = ctx.createImageData(realWidth, realHeight);
     const data = imageData.data;
 
-    // Fill black background directly in ImageData
     for (let i = 0; i < data.length; i += 4) {
       data[i] = 0; // R
       data[i + 1] = 0; // G
@@ -1221,14 +1173,12 @@ function update() {
         let cellColor = f.cellColor[3 * (j * f.fNumY + i)];
         let intensity = Math.round(cellColor * 255);
 
-        // Calculate pixel positions once
         const startX = j * cellSize - cellSize * CELL_CROP_X;
         const startY =
           (f.fNumY - i) * cellSize - cellSize * CELL_CROP_Y;
         const width = finalSize - squarePadding;
         const height = finalSize - squarePadding;
 
-        // Fill pixels directly in ImageData
         for (let y = startY; y < startY + height; y++) {
           for (let x = startX; x < startX + width; x++) {
             const index = (y * realWidth + x) * 4;
@@ -1247,7 +1197,6 @@ function update() {
 }
 
 setupScene();
-// draw obstacle in the middle
 startDrag(window.innerWidth / 2, window.innerHeight * 0.54);
 endDrag();
 update();
