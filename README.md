@@ -1,12 +1,3 @@
-[![Fluid Trangle](/og.png)](https://fluid-triangle.vercel.app)
-
-Fun exploration with fluid physics and ASCII rendering.
-
-- The simulation code is all from [10 minute physics](https://github.com/matthias-research/pages/blob/master/tenMinutePhysics/18-flip.html).
-- I added a bunch of things: device motion support, change how the obstacle interacts with the particles to make it more fun to move, tweaked the physics and speeds, rendering with ASCII, etc.
-- To pick the characters for the rendering I [created my own tool with v0](https://v0.dev/chat/brightness-calculator-app-diwk1Unlfdx?b=b_mZ7BOmcGVx9). This was fun and allowed me to easily create multiple sequences so I can have one different per column.
-- This was originally inspired by the https://vercel.com/fluid launch and the ["Flud Simulation Pendant"](https://www.youtube.com/watch?v=jis1MC5Tm8k) youtube video.
-
 ### Physics simulation license
 
 ```
