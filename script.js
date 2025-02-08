@@ -1,4 +1,7 @@
-/* Copyright 2022 Matthias Müller - Ten Minute Physics, 
+/*
+I tweaked the original code quite a bit.
+
+Copyright 2022 Matthias Müller - Ten Minute Physics, 
 www.youtube.com/c/TenMinutePhysics
 www.matthiasMueller.info/tenMinutePhysics
 
